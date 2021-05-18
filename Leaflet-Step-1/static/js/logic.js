@@ -18,10 +18,27 @@ function createFeatures(earthquakeData) {
 
     // Creates cirle marker function
     function createCircleMarker( feature, latlng ){
+
+        // Determine color based on depth
+
+        var depth = feature.geometry.coordinates[2];
+        var color = "";
+
+        if (depth > 90) {
+            color = "#FF7B00";
+          }
+          else if (depth > 50) {
+            color = "#FFA200";
+          } else if (depth > 10) {
+            color = "#FFC300";  
+          } else {
+            color = "#FFEA00"
+          }
+        
         // Change the values of these options to change the symbol's appearance
         let options = {
-          radius: feature.properties.mag * 3,
-          fillColor: "lightgreen",
+          radius: feature.properties.mag * 4,
+          fillColor: color,
           color: "black",
           weight: 1,
           opacity: 1,
@@ -34,6 +51,7 @@ function createFeatures(earthquakeData) {
         layer.bindPopup(
             `<h3>Magnitude: ${feature.properties.mag}</h3>
              <h3>Place: ${feature.properties.place}</h3>
+             <h3>Depth: ${feature.geometry.coordinates[2]}</h3>
              <h3>Time of earthquake: ${Date(feature.properties.time)}</h3>
             `);
     }
