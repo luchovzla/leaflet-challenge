@@ -16,10 +16,11 @@ function createFeatures(earthquakeData) {
     // Creates a popup on each feature describing the time and place of earthquake
     console.log("createFeatures");
 
+    // Creates cirle marker function
     function createCircleMarker( feature, latlng ){
         // Change the values of these options to change the symbol's appearance
         let options = {
-          radius: 8,
+          radius: feature.properties.mag * 3,
           fillColor: "lightgreen",
           color: "black",
           weight: 1,
@@ -30,7 +31,11 @@ function createFeatures(earthquakeData) {
       }
     
     function onEachFeature(feature, layer) {
-        layer.bindPopup
+        layer.bindPopup(
+            `<h3>Magnitude: ${feature.properties.mag}</h3>
+             <h3>Place: ${feature.properties.place}</h3>
+             <h3>Time of earthquake: ${Date(feature.properties.time)}</h3>
+            `);
     }
 
     // Create a GeoJSON layer containing the features array
