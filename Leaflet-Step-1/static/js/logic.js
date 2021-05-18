@@ -7,7 +7,6 @@ var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/signif
 // Get request from query URL
 d3.json(queryUrl).then(function(data) {
     // Send the response to a createFeatures function
-    console.log(data);
     createFeatures(data.features);
 });
 
@@ -16,16 +15,30 @@ function createFeatures(earthquakeData) {
     // Create the function that walks the features array
     // Creates a popup on each feature describing the time and place of earthquake
     console.log("createFeatures");
+
+    function createCircleMarker( feature, latlng ){
+        // Change the values of these options to change the symbol's appearance
+        let options = {
+          radius: 8,
+          fillColor: "lightgreen",
+          color: "black",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        }
+        return L.circleMarker( latlng, options );
+      }
+    
     function onEachFeature(feature, layer) {
-        console.log(feature.properties.time);
-        layer.bindPopup(`<h3>${Date(feature.properties.time)}</h3>`);
+        layer.bindPopup
     }
 
     // Create a GeoJSON layer containing the features array
     // Run the onEachFeature function for each piece of the array
 
     var earthquakes = L.geoJSON(earthquakeData, {
-        onEachFeature: onEachFeature
+        onEachFeature: onEachFeature,
+        pointToLayer: createCircleMarker
     });
 
     // Now we send this layer to our createMap function
