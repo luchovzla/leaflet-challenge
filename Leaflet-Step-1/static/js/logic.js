@@ -10,35 +10,27 @@ d3.json(queryUrl).then(function(data) {
     createFeatures(data.features);
 });
 
+function getColor(d) {
+    return d > 90  ? '#FF7B00' :
+           d > 50  ? '#FFA200' :
+           d > 10  ? '#FFC300' :
+                     '#FFEA00' ;
+}
+
 function createFeatures(earthquakeData) {
 
     // Create the function that walks the features array
     // Creates a popup on each feature describing the time and place of earthquake
-    console.log("createFeatures");
 
     // Creates cirle marker function
     function createCircleMarker( feature, latlng ){
 
         // Determine color based on depth
-
-        var depth = feature.geometry.coordinates[2];
-        var color = "";
-
-        if (depth > 90) {
-            color = "#FF7B00";
-          }
-          else if (depth > 50) {
-            color = "#FFA200";
-          } else if (depth > 10) {
-            color = "#FFC300";  
-          } else {
-            color = "#FFEA00"
-          }
         
         // Change the values of these options to change the symbol's appearance
         let options = {
           radius: feature.properties.mag * 4,
-          fillColor: color,
+          fillColor: getColor(feature.geometry.coordinates[2]),
           color: "black",
           weight: 1,
           opacity: 1,
@@ -108,8 +100,30 @@ function createMap(earthquakes) {
         layers: [satellitemap, earthquakes]
     });
 
+
     // layer control
     L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
     }).addTo(myMap);
+
+    // Legend
+    var legend = L.control({position: "bottomright"});
+
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [-10, 10, 50, 90],
+            labels = [];
+    
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
+    
+        return div;
+    };
+    
+    legend.addTo(myMap);
 }
